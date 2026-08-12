@@ -683,7 +683,7 @@ export default function AdminPage() {
       </header>
 
       <nav className="admin-tabs" aria-label="Admin sections">
-        {/* Map Manager is temporarily hidden and can be re-enabled later. */}
+        <button className={adminTab === "maps" ? "active" : ""} type="button" onClick={() => setAdminTab("maps")}>Map Manager</button>
         <button className={adminTab === "users" ? "active" : ""} type="button" onClick={() => setAdminTab("users")}>User Master</button>
         <button className={adminTab === "bookings" ? "active" : ""} type="button" onClick={() => setAdminTab("bookings")}>Bookings</button>
         {/* Location Master is temporarily hidden and can be re-enabled later. */}
