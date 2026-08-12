@@ -767,6 +767,12 @@ input {
   opacity: 0.96;
 }
 
+.slot.is-stack.reserved,
+.slot.is-stack.maintenance {
+  background: color-mix(in srgb, var(--reserved) 80%, transparent);
+  color: #fff;
+}
+
 .slot-number {
   overflow: hidden;
   max-width: 100%;
@@ -800,6 +806,11 @@ input {
 
 .stack-flag.booked {
   background: color-mix(in srgb, var(--booked) 88%, #000);
+}
+
+.stack-flag.reserved,
+.stack-flag.maintenance {
+  background: color-mix(in srgb, var(--reserved) 86%, #333);
 }
 
 .floating-position {

@@ -510,19 +510,21 @@ function SlotMarker({ slot, selected, onSelect }) {
   const displayNumbers = getSlotDisplayNumbers(slot);
   const mapDisplayNumbers = getStackMapDisplayNumbers(slot);
   const isStack = displayNumbers.length > 1;
+  const displayStatus = slot.occupancyStatus || slot.status;
+  const isBlocked = displayStatus === "reserved" || displayStatus === "maintenance";
 
   return (
     <button
-      className={`slot ${slot.occupancyStatus || slot.status} ${selected ? "is-selected" : ""} ${isStack ? "is-stack" : ""}`}
+      className={`slot ${displayStatus} ${selected ? "is-selected" : ""} ${isStack ? "is-stack" : ""}`}
       style={{ left: `${slot.x}%`, top: `${slot.y}%`, width: `${slot.w}%`, height: `${slot.h}%` }}
       onClick={onSelect}
-      title={`${slot.slotNo} ${slot.occupancyStatus || slot.status}`}
+      title={`${slot.slotNo} ${displayStatus}`}
       type="button"
     >
       {isStack ? (
         <span className="stack-flags">
           {mapDisplayNumbers.map((item) => (
-            <span className={`stack-flag ${item.booked ? "booked" : "available"}`} key={item.level}>
+            <span className={`stack-flag ${isBlocked ? displayStatus : item.booked ? "booked" : "available"}`} key={item.level}>
               {item.slotNo}
             </span>
           ))}
