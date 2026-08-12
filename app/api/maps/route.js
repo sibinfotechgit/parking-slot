@@ -49,6 +49,7 @@ export async function POST(request) {
         locationId,
         name,
         parkingLevel,
+        isVisible: true,
         filePath,
         sourceType
       }

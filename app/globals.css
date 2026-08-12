@@ -452,6 +452,33 @@ input {
   overflow-wrap: anywhere;
 }
 
+.hidden-badge {
+  width: fit-content;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #f4dfd8;
+  color: #9c2f14;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.map-settings {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto auto;
+  gap: 10px;
+  align-items: end;
+  min-width: min(520px, 100%);
+}
+
+.map-visible-check {
+  min-height: 42px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  white-space: nowrap;
+}
+
 .note,
 .empty {
   color: var(--muted);

@@ -72,7 +72,12 @@ export default function Home() {
       if (!response.ok) {
         throw new Error(data.detail || data.error || "Could not load locations.");
       }
-      const nextLocations = data.locations || [];
+      const nextLocations = (data.locations || [])
+        .map((location) => ({
+          ...location,
+          maps: (location.maps || []).filter((map) => map.isVisible !== false)
+        }))
+        .filter((location) => location.maps.length);
       const nextLocation = nextLocations.find((item) => item.id === preferredLocationId) || nextLocations[0];
       const maps = nextLocation?.maps || [];
       const nextMap = maps.find((item) => item.id === preferredMapId) || maps.find((item) => item.parkingLevel === Number(selectedLevel)) || maps[0];

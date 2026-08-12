@@ -37,6 +37,7 @@ export default function AdminPage() {
   const [userPage, setUserPage] = useState(1);
   const [locationForm, setLocationForm] = useState(emptyLocationForm);
   const [mapTitle, setMapTitle] = useState("");
+  const [mapVisible, setMapVisible] = useState(true);
   const [mapName, setMapName] = useState("");
   const [mapLevels, setMapLevels] = useState([1]);
   const [mapFile, setMapFile] = useState(null);
@@ -100,6 +101,7 @@ export default function AdminPage() {
         city: nextLocation?.city || ""
       });
       setMapTitle(nextMap?.name || "");
+      setMapVisible(nextMap?.isVisible !== false);
       if (nextSlot) {
         setSelectedSlotId(nextSlot.id);
         setForm(slotToForm(nextSlot));
@@ -214,6 +216,7 @@ export default function AdminPage() {
     setLocationId(nextLocationId);
     setMapId(nextLocation?.maps[0]?.id || "");
     setMapTitle(nextLocation?.maps[0]?.name || "");
+    setMapVisible(nextLocation?.maps[0]?.isVisible !== false);
     setLocationForm({
       id: nextLocation?.id || "",
       name: nextLocation?.name || "",
@@ -228,6 +231,7 @@ export default function AdminPage() {
     const nextMap = activeLocation?.maps.find((map) => map.id === nextMapId);
     setMapId(nextMapId);
     setMapTitle(nextMap?.name || "");
+    setMapVisible(nextMap?.isVisible !== false);
     setSelectedSlotId("");
     setForm(emptySlot);
   }
@@ -426,14 +430,14 @@ export default function AdminPage() {
       const response = await fetch(`/api/maps/${activeMap.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: mapTitle })
+        body: JSON.stringify({ name: mapTitle, isVisible: mapVisible })
       });
       const data = await readJsonResponse(response);
       if (!response.ok) {
         throw new Error(data.error || "Could not save parking name.");
       }
       setMessage(`${data.map.name} parking map saved.`);
-      showToast("success", "Parking name saved.");
+      showToast("success", "Parking settings saved.");
       await loadLocations(locationId, data.map.id, selectedSlotId);
     } catch (error) {
       setMessage(`Could not save parking name: ${error.message}`);
@@ -709,6 +713,7 @@ export default function AdminPage() {
                 <button className={`map-item ${map.id === activeMap?.id ? "active" : ""}`} key={map.id} onClick={() => selectMap(map.id)}>
                   <span>{getParkingLevelLabel(map.parkingLevel || 1)}</span>
                   <em>{map.name}</em>
+                  {map.isVisible === false && <strong className="hidden-badge">Hidden</strong>}
                   <small>{displayMapSource(map.file)}</small>
                 </button>
               ))}
@@ -746,6 +751,19 @@ export default function AdminPage() {
               <p className="eyebrow">{activeLocation?.name || "Location"}</p>
               <h2>{activeMap ? `${getParkingLevelLabel(activeMap.parkingLevel || 1)} - ${activeMap.name}` : "No map selected"}</h2>
             </div>
+            <form className="map-settings" onSubmit={saveMapTitle}>
+              <label>
+                Parking Name
+                <input value={mapTitle} onChange={(event) => setMapTitle(event.target.value)} placeholder="Parking / map name" disabled={!activeMap || Boolean(pendingAction)} />
+              </label>
+              <label className="inline-check map-visible-check">
+                <input type="checkbox" checked={mapVisible} disabled={!activeMap || Boolean(pendingAction)} onChange={(event) => setMapVisible(event.target.checked)} />
+                <span>Show to users</span>
+              </label>
+              <button className="secondary compact-action" disabled={!activeMap || Boolean(pendingAction)} type="submit">
+                {pendingAction === "saveMapTitle" ? "Saving..." : "Save Parking"}
+              </button>
+            </form>
             <div className="stats map-stats">
               <span><strong>{stats.total}</strong> Capacity</span>
               <span><strong>{stats.available}</strong> Available</span>
@@ -1021,6 +1039,7 @@ export default function AdminPage() {
                 <button className={`map-item ${map.id === activeMap?.id ? "active" : ""}`} key={map.id} type="button" onClick={() => selectMap(map.id)}>
                   <span>{getParkingLevelLabel(map.parkingLevel || 1)}</span>
                   <em>{map.name}</em>
+                  {map.isVisible === false && <strong className="hidden-badge">Hidden</strong>}
                   <small>{displayMapSource(map.file)}</small>
                 </button>
               ))}

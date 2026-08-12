@@ -9,6 +9,7 @@ export async function PATCH(request, { params }) {
   const data = {};
 
   if (body.name !== undefined) data.name = String(body.name || "").trim();
+  if (body.isVisible !== undefined) data.isVisible = Boolean(body.isVisible);
   if (body.parkingLevel !== undefined) {
     const parkingLevel = Number(body.parkingLevel);
     if (Number.isFinite(parkingLevel)) data.parkingLevel = Math.max(1, Math.min(5, Math.trunc(parkingLevel)));

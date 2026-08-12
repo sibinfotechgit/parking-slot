@@ -24,6 +24,7 @@ model Map {
   name       String
   filePath   String
   parkingLevel Int         @default(1)
+  isVisible  Boolean       @default(true)
   sourceType String        @default("pdf")
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt

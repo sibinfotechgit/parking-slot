@@ -57,6 +57,7 @@ export async function GET() {
           id: map.id,
           name: map.name,
           parkingLevel: map.parkingLevel || 1,
+          isVisible: map.isVisible,
           sourceType: map.sourceType,
           file: getMapFileUrl(map),
           slots: map.slots.map((slot) => {
