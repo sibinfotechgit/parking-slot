@@ -4,16 +4,33 @@ const prisma = new PrismaClient();
 
 function getSlotPrefixForParkingLevel(level) {
   const value = Number(level || 1);
-  if (value <= 1) return "GLR";
-  return `${value - 1}R`;
+  if (value <= 1) return "GL";
+  return `P${value - 1}`;
 }
 
 function formatParkingSlotNo(level, number) {
   return `${getSlotPrefixForParkingLevel(level)}${String(number).padStart(3, "0")}`;
 }
 
+function formatSurfaceSlotNo(level, number) {
+  return `${getSlotPrefixForParkingLevel(level)}S${String(number).padStart(2, "0")}`;
+}
+
+function isSurfaceParkingType(type = "") {
+  return String(type).toLowerCase().includes("surface");
+}
+
 function parseSlotNumber(slotNo) {
-  const match = String(slotNo || "").match(/^(.*?)(\d+)$/);
+  const value = String(slotNo || "").trim();
+  const structured = value.match(/^(GL|P\d)(S?)(\d+)$/i);
+  if (structured) {
+    return {
+      prefix: `${structured[1].toUpperCase()}${structured[2].toUpperCase()}`,
+      number: Number(structured[3])
+    };
+  }
+
+  const match = value.match(/^(.*?)(\d+)$/);
   if (!match) return null;
   return {
     prefix: match[1],
@@ -28,6 +45,10 @@ function getSlotCapacity(slot) {
 }
 
 function sortSlotsForRename(a, b) {
+  const leftSurface = isSurfaceParkingType(a.type);
+  const rightSurface = isSurfaceParkingType(b.type);
+  if (leftSurface !== rightSurface) return leftSurface ? 1 : -1;
+
   const left = parseSlotNumber(a.slotNo);
   const right = parseSlotNumber(b.slotNo);
   if (left && right && left.number !== right.number) return left.number - right.number;
@@ -50,9 +71,15 @@ async function main() {
 
   const updates = [];
   maps.forEach((map) => {
-    let nextNumber = 101;
+    let nextParkingNumber = 1;
+    let nextSurfaceNumber = 1;
+
     [...map.slots].sort(sortSlotsForRename).forEach((slot) => {
-      const nextSlotNo = formatParkingSlotNo(map.parkingLevel || 1, nextNumber);
+      const isSurface = isSurfaceParkingType(slot.type);
+      const nextSlotNo = isSurface
+        ? formatSurfaceSlotNo(map.parkingLevel || 1, nextSurfaceNumber)
+        : formatParkingSlotNo(map.parkingLevel || 1, nextParkingNumber);
+
       updates.push({
         id: slot.id,
         map: map.name,
@@ -60,7 +87,12 @@ async function main() {
         from: slot.slotNo,
         to: nextSlotNo
       });
-      nextNumber += getSlotCapacity(slot);
+
+      if (isSurface) {
+        nextSurfaceNumber += 1;
+      } else {
+        nextParkingNumber += getSlotCapacity(slot);
+      }
     });
   });
 
