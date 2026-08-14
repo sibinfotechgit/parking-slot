@@ -11,6 +11,7 @@ export default function UserLoginPage() {
   const [step, setStep] = useState("mobile");
   const [pending, setPending] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [alertTitle, setAlertTitle] = useState("Could Not Continue");
   const [message, setMessage] = useState(
     OTP_LOGIN_DISABLED ? "OTP is temporarily disabled. Enter mobile number to continue." : "Login with mobile OTP."
   );
@@ -54,7 +55,7 @@ export default function UserLoginPage() {
       });
       const data = await response.json();
       if (!response.ok) {
-        showLoginAlert(data.error || "Could not send OTP.");
+        showLoginAlert(data.error || "Could not send OTP.", data.launchLocked ? "Parking Starts Soon" : "Could Not Continue");
         return;
       }
       setDemoOtp(data.demoOtp || "");
@@ -90,7 +91,8 @@ export default function UserLoginPage() {
     }
   }
 
-  function showLoginAlert(text) {
+  function showLoginAlert(text, title = "Could Not Continue") {
+    setAlertTitle(title);
     setMessage(text);
     setAlertMessage(text);
   }
@@ -130,7 +132,7 @@ export default function UserLoginPage() {
         <div className="modal-backdrop" role="presentation" onClick={() => setAlertMessage("")}>
           <section className="login-alert-modal" role="alertdialog" aria-modal="true" aria-labelledby="login-alert-title" onClick={(event) => event.stopPropagation()}>
             <p className="section-label">Login Access</p>
-            <h2 id="login-alert-title">Could Not Continue</h2>
+            <h2 id="login-alert-title">{alertTitle}</h2>
             <p>{alertMessage}</p>
             <button className="primary" type="button" onClick={() => setAlertMessage("")}>Okay</button>
           </section>
