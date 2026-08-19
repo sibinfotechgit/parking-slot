@@ -3,8 +3,8 @@ import { createOtp } from "../../../../../lib/otp-store";
 import { prisma } from "../../../../../lib/prisma";
 import { getWhatsappMode, sendOtpMessage } from "../../../../../lib/whatsapp";
 
-const PARKING_LAUNCH_AT = new Date("2026-08-22T00:00:00+05:30");
-const PARKING_LAUNCH_MESSAGE = "The Shreeji Plaza Parking System will start on 22nd August";
+const PARKING_LAUNCH_AT = new Date("2026-08-18T00:00:00+05:30");
+const PARKING_LAUNCH_MESSAGE = "The Shreeji Plaza Parking System will start on 18th August";
 
 export async function POST(request) {
   if (Date.now() < PARKING_LAUNCH_AT.getTime()) {

@@ -47,7 +47,7 @@ export async function POST(request, { params }) {
         throw new Error(`You already have an active booking for ${existingUserBooking.slot.slotNo}.`);
       }
 
-      if (slot.status === "reserved" || slot.status === "maintenance") {
+      if (["reserved", "maintenance", "sold"].includes(slot.status)) {
         throw new Error(`Slot is ${slot.status}.`);
       }
 

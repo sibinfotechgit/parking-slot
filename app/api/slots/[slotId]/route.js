@@ -29,7 +29,7 @@ export async function PATCH(request, { params }) {
     );
   }
 
-  if (data.status && ["available", "reserved", "maintenance"].includes(data.status)) {
+  if (data.status && ["available", "reserved", "maintenance", "sold"].includes(data.status)) {
     await prisma.booking.updateMany({
       where: { slotId: params.slotId, status: "active" },
       data: { status: "cancelled" }

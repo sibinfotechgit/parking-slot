@@ -182,7 +182,7 @@ export default function AdminPage() {
     return slots.reduce((current, slot) => {
       const capacity = getSlotCapacity(slot);
       const booked = Math.min(capacity, slot.bookedLevels?.length || 0);
-      const unavailable = slot.status === "reserved" || slot.status === "maintenance";
+      const unavailable = ["reserved", "maintenance", "sold"].includes(slot.status);
       current.total += capacity;
       current.booked += booked;
       current.available += unavailable ? 0 : Math.max(0, capacity - booked);
@@ -687,7 +687,7 @@ export default function AdminPage() {
       </header>
 
       <nav className="admin-tabs" aria-label="Admin sections">
-        {/* Map Manager is temporarily hidden and can be re-enabled later. */}
+        <button className={adminTab === "maps" ? "active" : ""} type="button" onClick={() => setAdminTab("maps")}>Map Manager</button>
         <button className={adminTab === "users" ? "active" : ""} type="button" onClick={() => setAdminTab("users")}>User Master</button>
         <button className={adminTab === "bookings" ? "active" : ""} type="button" onClick={() => setAdminTab("bookings")}>Bookings</button>
         {/* Location Master is temporarily hidden and can be re-enabled later. */}
@@ -853,6 +853,7 @@ export default function AdminPage() {
             <option value="available">Available</option>
             <option value="reserved">Reserved</option>
             <option value="maintenance">Maintenance</option>
+            <option value="sold">Sold</option>
           </select></label>
 
           {selectedSlot && (
@@ -1190,7 +1191,7 @@ function getReportSlotRows(locations) {
       (map.slots || []).flatMap((slot) => (
         getSlotDisplayNumbers(slot).map((display) => {
           const booking = getBookingForLevel(slot, display.level);
-          const isBlocked = slot.status === "reserved" || slot.status === "maintenance";
+          const isBlocked = ["reserved", "maintenance", "sold"].includes(slot.status);
           return {
             location: location.name || "",
             city: location.city || "",
@@ -1296,7 +1297,7 @@ function SlotMarker({ display, occupancyStatus, onClick, selected, slot, style }
   const displayNumbers = getSlotDisplayNumbers(previewSlot);
   const mapDisplayNumbers = getStackMapDisplayNumbers(previewSlot);
   const isStack = displayNumbers.length > 1;
-  const isBlocked = occupancyStatus === "reserved" || occupancyStatus === "maintenance";
+  const isBlocked = ["reserved", "maintenance", "sold"].includes(occupancyStatus);
 
   return (
     <button

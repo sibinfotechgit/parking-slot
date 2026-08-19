@@ -741,6 +741,10 @@ input {
   background: color-mix(in srgb, var(--booked) 82%, transparent);
 }
 
+.slot.sold {
+  background: color-mix(in srgb, var(--booked) 86%, transparent);
+}
+
 .slot.partial {
   background: color-mix(in srgb, var(--partial) 84%, transparent);
   color: #1f241f;
@@ -770,6 +774,11 @@ input {
 .slot.is-stack.reserved,
 .slot.is-stack.maintenance {
   background: color-mix(in srgb, var(--reserved) 80%, transparent);
+  color: #fff;
+}
+
+.slot.is-stack.sold {
+  background: color-mix(in srgb, var(--booked) 86%, transparent);
   color: #fff;
 }
 
@@ -805,6 +814,10 @@ input {
 }
 
 .stack-flag.booked {
+  background: color-mix(in srgb, var(--booked) 88%, #000);
+}
+
+.stack-flag.sold {
   background: color-mix(in srgb, var(--booked) 88%, #000);
 }
 

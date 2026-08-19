@@ -138,7 +138,9 @@ export default function Home() {
       .find((item) => item.booking.mobile === sessionMobile);
   }, [locations, sessionMobile]);
 
-  const canBookSelectedSlot = selectedSlot && !pendingAction && !userActiveBooking && (isStackSlot ? !selectedLevelBooked : selectedSlot.occupancyStatus !== "booked");
+  const selectedSlotStatus = selectedSlot?.occupancyStatus || selectedSlot?.status;
+  const selectedSlotBlocked = ["reserved", "maintenance", "sold"].includes(selectedSlotStatus);
+  const canBookSelectedSlot = selectedSlot && !pendingAction && !userActiveBooking && !selectedSlotBlocked && (isStackSlot ? !selectedLevelBooked : selectedSlotStatus !== "booked");
 
   useEffect(() => {
     if (!selectedSlot) {
@@ -187,7 +189,7 @@ export default function Home() {
         const status = slot.occupancyStatus || slot.status || "available";
         const capacity = Math.max(1, slot.levels?.length || 1);
         const booked = Math.min(capacity, slot.bookedLevels?.length || 0);
-        const available = status === "reserved" || status === "maintenance" ? 0 : Math.max(0, capacity - booked);
+        const available = ["reserved", "maintenance", "sold"].includes(status) ? 0 : Math.max(0, capacity - booked);
         const typeKey = getParkingTypeGroup(slot);
         current.physicalSlots += 1;
         current.totalCapacity += capacity;
@@ -200,7 +202,7 @@ export default function Home() {
           current.carAvailable += available;
         }
 
-        if (status === "reserved" || status === "maintenance") {
+        if (["reserved", "maintenance", "sold"].includes(status)) {
           current.unavailable += capacity;
         } else {
           current.availableCapacity += available;
@@ -260,7 +262,7 @@ export default function Home() {
       return;
     }
     const displayStatus = selectedSlot.occupancyStatus || selectedSlot.status;
-    if (displayStatus === "reserved" || displayStatus === "maintenance") {
+    if (["reserved", "maintenance", "sold"].includes(displayStatus)) {
       showToast("error", `${selectedSlot.slotNo} is ${displayStatus}.`);
       return;
     }
@@ -511,7 +513,7 @@ function SlotMarker({ slot, selected, onSelect }) {
   const mapDisplayNumbers = getStackMapDisplayNumbers(slot);
   const isStack = displayNumbers.length > 1;
   const displayStatus = slot.occupancyStatus || slot.status;
-  const isBlocked = displayStatus === "reserved" || displayStatus === "maintenance";
+  const isBlocked = ["reserved", "maintenance", "sold"].includes(displayStatus);
 
   return (
     <button
