@@ -579,8 +579,6 @@ function SlotBookingPopup({
           <div><dt>Level</dt><dd>{getParkingLevelLabel(selectedLevel)}</dd></div>
           <div><dt>Map</dt><dd>{activeMap?.name || "-"}</dd></div>
           <div><dt>Status</dt><dd>{slot.occupancyStatus || slot.status || "-"}</dd></div>
-          {selectedLevelBooking && <div><dt>Booked By</dt><dd>{selectedLevelBooking.allottee}</dd></div>}
-          {selectedLevelBooking?.createdAt && <div><dt>Booked At</dt><dd>{formatDateTime(selectedLevelBooking.createdAt)}</dd></div>}
         </dl>
 
         {isStack && (
