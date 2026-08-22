@@ -3,8 +3,6 @@
 import { useState } from "react";
 
 const OTP_LOGIN_DISABLED = false;
-const LOGIN_LAUNCH_LOCKED = true;
-const LAUNCH_MESSAGE = "The Shreeji Plaza Parking System will start on 22nd August.";
 
 export default function UserLoginPage() {
   const [mobile, setMobile] = useState("");
@@ -15,7 +13,7 @@ export default function UserLoginPage() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertTitle, setAlertTitle] = useState("Could Not Continue");
   const [message, setMessage] = useState(
-    LOGIN_LAUNCH_LOCKED ? LAUNCH_MESSAGE : OTP_LOGIN_DISABLED ? "OTP is temporarily disabled. Enter mobile number to continue." : "Login with mobile OTP."
+    OTP_LOGIN_DISABLED ? "OTP is temporarily disabled. Enter mobile number to continue." : "Login with mobile OTP."
   );
 
   async function loginDirectly(event) {
@@ -48,10 +46,6 @@ export default function UserLoginPage() {
   // WhatsApp OTP flow is kept here for future re-enable.
   async function requestOtp(event) {
     event.preventDefault();
-    if (LOGIN_LAUNCH_LOCKED) {
-      showLoginAlert(LAUNCH_MESSAGE, "Parking Starts Soon");
-      return;
-    }
     setPending(true);
     try {
       const response = await fetch("/api/auth/otp/request", {
