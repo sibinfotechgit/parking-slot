@@ -3,8 +3,6 @@
 import { useState } from "react";
 
 const OTP_LOGIN_DISABLED = false;
-const USER_LOGIN_RESTRICTED = true;
-const LOGIN_RESTRICTED_MESSAGE = "Parking login is temporarily restricted. Please wait for further instructions.";
 
 export default function UserLoginPage() {
   const [mobile, setMobile] = useState("");
@@ -15,7 +13,7 @@ export default function UserLoginPage() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertTitle, setAlertTitle] = useState("Could Not Continue");
   const [message, setMessage] = useState(
-    USER_LOGIN_RESTRICTED ? LOGIN_RESTRICTED_MESSAGE : OTP_LOGIN_DISABLED ? "OTP is temporarily disabled. Enter mobile number to continue." : "Login with mobile OTP."
+    OTP_LOGIN_DISABLED ? "OTP is temporarily disabled. Enter mobile number to continue." : "Login with mobile OTP."
   );
 
   async function loginDirectly(event) {
@@ -48,10 +46,6 @@ export default function UserLoginPage() {
   // WhatsApp OTP flow is kept here for future re-enable.
   async function requestOtp(event) {
     event.preventDefault();
-    if (USER_LOGIN_RESTRICTED) {
-      showLoginAlert(LOGIN_RESTRICTED_MESSAGE, "Login Restricted");
-      return;
-    }
     setPending(true);
     try {
       const response = await fetch("/api/auth/otp/request", {
